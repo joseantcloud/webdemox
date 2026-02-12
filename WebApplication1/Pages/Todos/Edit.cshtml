@@ -1,51 +1,71 @@
-@page
+@page "{id:int}"
 @model WebApplication1.Pages_Todos.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar tarea";
 }
 
-<h1>Edit</h1>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
 
-<h4>TodoItem</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="TodoItem.Id" />
-            <div class="form-group">
-<span class="text-danger">*</span>
-                <label asp-for="TodoItem.Title" class="control-label"></label>
-                <input asp-for="TodoItem.Title" class="form-control" aria-required="true"/>
-                <span asp-validation-for="TodoItem.Title" class="text-danger"></span>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+                <h1 class="h3 mb-1">Editar tarea</h1>
+                <div class="text-muted">Actualizá el título, estado o fecha límite.</div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="TodoItem.IsDone" /> @Html.DisplayNameFor(model => model.TodoItem.IsDone)
-                </label>
+            <a class="btn btn-outline-secondary" asp-page="./Index">Volver</a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="post" asp-route-id="@Model.TodoItem.Id">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="TodoItem.Id" />
+
+                    <!-- Si preferís NO postear CreatedAtUtc, podés borrar este hidden -->
+                    <input type="hidden" asp-for="TodoItem.CreatedAtUtc" />
+
+                    <div class="mb-3">
+                        <label asp-for="TodoItem.Title" class="form-label">
+                            Título <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="TodoItem.Title" class="form-control" required />
+                        <span asp-validation-for="TodoItem.Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TodoItem.DueAtUtc" class="form-label">Fecha límite</label>
+                        <input asp-for="TodoItem.DueAtUtc" type="datetime-local" class="form-control" />
+                        <div class="form-text">Se guardará en UTC en la base de datos.</div>
+                        <span asp-validation-for="TodoItem.DueAtUtc" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" asp-for="TodoItem.IsDone" />
+                        <label class="form-check-label" asp-for="TodoItem.IsDone">
+                            Marcar como completada
+                        </label>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Creada</label>
+                        <input class="form-control" value="@Model.TodoItem.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") (UTC)" disabled />
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        <a class="btn btn-outline-secondary" asp-page="./Index">Cancelar</a>
+                    </div>
+                </form>
+
             </div>
-            <div class="form-group">
-                <label asp-for="TodoItem.CreatedAtUtc" class="control-label"></label>
-                <input asp-for="TodoItem.CreatedAtUtc" class="form-control" />
-                <span asp-validation-for="TodoItem.CreatedAtUtc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TodoItem.DueAtUtc" class="control-label"></label>
-                <input asp-for="TodoItem.DueAtUtc" class="form-control" />
-                <span asp-validation-for="TodoItem.DueAtUtc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

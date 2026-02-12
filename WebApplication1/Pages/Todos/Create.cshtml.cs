@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApplication1.Data;
 using WebApplication1.Models;
 
@@ -12,9 +11,9 @@ namespace WebApplication1.Pages_Todos
 {
     public class CreateModel : PageModel
     {
-        private readonly WebApplication1.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public CreateModel(WebApplication1.Data.AppDbContext context)
+        public CreateModel(AppDbContext context)
         {
             _context = context;
         }
@@ -27,12 +26,26 @@ namespace WebApplication1.Pages_Todos
         [BindProperty]
         public TodoItem TodoItem { get; set; } = default!;
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
+            }
+
+            // Siempre establecer fecha de creación en UTC
+            TodoItem.CreatedAtUtc = DateTime.UtcNow;
+
+            // Si el formulario envía un datetime-local,
+            // viene como Kind = Unspecified → convertir a UTC
+            if (TodoItem.DueAtUtc.HasValue)
+            {
+                var localTime = DateTime.SpecifyKind(
+                    TodoItem.DueAtUtc.Value,
+                    DateTimeKind.Local
+                );
+
+                TodoItem.DueAtUtc = localTime.ToUniversalTime();
             }
 
             _context.Todos.Add(TodoItem);

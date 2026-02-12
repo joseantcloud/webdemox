@@ -2,53 +2,106 @@
 @model WebApplication1.Pages_Todos.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Todos";
+
+    var total = Model.TodoItem?.Count ?? 0;
+    var done = Model.TodoItem?.Count(t => t.IsDone) ?? 0;
+    var pending = total - done;
 }
 
-<h1>Index</h1>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">Todos</h1>
+        <div class="text-muted">Administrá tus tareas.</div>
+    </div>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TodoItem[0].Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TodoItem[0].IsDone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TodoItem[0].CreatedAtUtc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TodoItem[0].DueAtUtc)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.TodoItem) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAtUtc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DueAtUtc)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="d-flex align-items-center gap-2">
+        <span class="badge text-bg-secondary">Total: @total</span>
+        <span class="badge text-bg-warning">Pendientes: @pending</span>
+        <span class="badge text-bg-success">Hechas: @done</span>
+
+        <a class="btn btn-primary" asp-page="./Create">+ Nueva tarea</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Título</th>
+                        <th class="text-center">Estado</th>
+                        <th>Creada</th>
+                        <th>Vence</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                @if (Model.TodoItem == null || !Model.TodoItem.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            No hay tareas todavía. Creá la primera con <strong>“Nueva tarea”</strong>.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.TodoItem.OrderByDescending(t => t.CreatedAtUtc))
+                    {
+                        <tr>
+                            <td class="fw-semibold">
+                                @item.Title
+                            </td>
+
+                            <td class="text-center">
+                                @if (item.IsDone)
+                                {
+                                    <span class="badge text-bg-success">Hecha</span>
+                                }
+                                else
+                                {
+                                    <span class="badge text-bg-warning">Pendiente</span>
+                                }
+                            </td>
+
+                            <td class="text-muted">
+                                @item.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm") <span class="small">(UTC)</span>
+                            </td>
+
+                            <td class="text-muted">
+                                @if (item.DueAtUtc.HasValue)
+                                {
+                                    @item.DueAtUtc.Value.ToString("yyyy-MM-dd HH:mm") <span class="small">(UTC)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                <div class="btn-group" role="group" aria-label="Acciones">
+                                    <a class="btn btn-sm btn-outline-primary" asp-page="./Edit" asp-route-id="@item.Id">
+                                        Editar
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-page="./Details" asp-route-id="@item.Id">
+                                        Ver
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-danger" asp-page="./Delete" asp-route-id="@item.Id">
+                                        Borrar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

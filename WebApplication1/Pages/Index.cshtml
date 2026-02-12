@@ -1,10 +1,136 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+
+        <!-- Hero -->
+        <div class="p-4 p-md-5 mb-4 bg-light rounded-3 border">
+            <h1 class="display-6 fw-bold mb-2">Migración de plataforma: Render → Azure</h1>
+            <p class="lead mb-3">
+                En esta plataforma vamos a construir y documentar una migración real (y bien hecha) hacia Azure.
+                La idea no es “mover código”, sino diseñar el sistema, estimar la carga, elegir servicios correctos
+                y dejar una base lista para crecer.
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-primary" asp-page="/Todos/Index">Ir a la app TODO</a>
+                <a class="btn btn-outline-secondary" href="https://github.com/joseantcloud/webdemox" target="_blank" rel="noreferrer">
+                    Ver repositorio en GitHub
+                </a>
+            </div>
+        </div>
+
+        <!-- What we’re doing -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-2">Qué vamos a hacer</h2>
+                <p class="text-muted mb-3">
+                    Partimos de una app simple (TODO) y la convertimos en un caso real de migración de plataforma:
+                    base de datos externa, configuración por variables de entorno, despliegue reproducible e infraestructura como código.
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <div class="fw-semibold mb-2">Objetivos técnicos</div>
+                            <ul class="mb-0">
+                                <li>Escalabilidad y operación estable</li>
+                                <li>Control de infraestructura y cambios</li>
+                                <li>Observabilidad (logs, métricas, health checks)</li>
+                                <li>Buenas prácticas (12-factor, secretos, stateless)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <div class="fw-semibold mb-2">Lo que NO es una migración</div>
+                            <ul class="mb-0">
+                                <li>No es copiar/pegar el proyecto en otro hosting</li>
+                                <li>No es “subir un Dockerfile y ya”</li>
+                                <li>No es elegir servicios por costumbre</li>
+                            </ul>
+                            <div class="small text-muted mt-2">
+                                Migrar es entender el sistema y diseñar para producción.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roadmap -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-2">Ruta de migración (paso a paso)</h2>
+                <p class="text-muted mb-3">
+                    Este será el flujo principal del tutorial y de la evolución de la plataforma.
+                </p>
+
+                <ol class="mb-0">
+                    <li><strong>Origen:</strong> app corriendo en Render (PaaS)</li>
+                    <li><strong>Infra:</strong> crear Resource Group y recursos con <strong>Terraform</strong></li>
+                    <li><strong>DB:</strong> provisionar <strong>Azure Database for PostgreSQL</strong></li>
+                    <li><strong>App:</strong> desplegar en <strong>Azure Web App (Linux / Container)</strong></li>
+                    <li><strong>CI/CD:</strong> código en <strong>GitHub</strong> + despliegue automático</li>
+                    <li><strong>Config:</strong> secrets/connection strings por <strong>App Settings</strong></li>
+                    <li><strong>Verificación:</strong> logs, métricas y pruebas rápidas post-deploy</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Tech stack -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-2">Tecnologías que vamos a usar</h2>
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <div class="fw-semibold mb-2">Código y App</div>
+                            <ul class="mb-0">
+                                <li>GitHub (repo + cambios versionados)</li>
+                                <li>Docker (build reproducible)</li>
+                                <li>Azure Web App for Containers</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <div class="fw-semibold mb-2">Infra y Datos</div>
+                            <ul class="mb-0">
+                                <li>Terraform (IaC)</li>
+                                <li>Azure Database for PostgreSQL</li>
+                                <li>Variables de entorno / secretos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-muted small mt-3">
+                    Tip: una migración “premium” siempre separa app y base de datos, y externaliza configuración.
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="card shadow-sm mb-5">
+            <div class="card-body">
+                <h2 class="h5 mb-2">Tips clave (mentalidad de Platform Engineering)</h2>
+                <ul class="mb-0">
+                    <li><strong>Stateless:</strong> el contenedor debe poder reiniciar sin perder estado.</li>
+                    <li><strong>Config externa:</strong> connection strings y secretos nunca en el repo.</li>
+                    <li><strong>Observabilidad:</strong> logs a stdout y métricas desde el día 1.</li>
+                    <li><strong>Repetible:</strong> si no lo podés recrear con Terraform, no está listo para equipo.</li>
+                    <li><strong>Decisiones por carga:</strong> elegí servicios por números, no por moda.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
 </div>
